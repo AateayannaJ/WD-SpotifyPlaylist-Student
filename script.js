@@ -118,8 +118,15 @@ function buildPlaylist() {
      3. Write an if / else if that assigns `songs` based on
         the mode
      ===================================================== */
-
-
+const mode = modeSelector.value;
+let songs;
+if (mode === "quickPlay") {
+    songs = allSongs.slice(0, 3); 
+  } else if (mode === "fullSession") {
+    songs = allSongs;
+  } else {
+    songs = [];
+  }
 
   /* =====================================================
      DEV TEAMS — STEP 6: Conditional Feedback
@@ -164,7 +171,17 @@ function buildPlaylist() {
 
      YOUR CODE GOES HERE:
      ===================================================== */
-
+container.innerHTML = "";
+songsRemovedCount = 0;
+  milestone.textContent = "";
+  if (songs.length === 0) {
+    feedback.textContent = "No songs are found for this mood.";
+    feedback.className = "feedback-box error";
+    return;
+  } else {
+    feedback.textContent = `Successfully loaded ${songs.length} tracks for your session!`;
+    feedback.className = "feedback-box success";
+  }
 
 
   /* =====================================================
@@ -181,7 +198,7 @@ function buildPlaylist() {
 
      YOUR CODE GOES HERE:
      ===================================================== */
-
+songs.forEach(function (song) {
 
 
     /* =====================================================
@@ -207,7 +224,25 @@ function buildPlaylist() {
 
        YOUR CODE GOES HERE:
        ===================================================== */
+const row = document.createElement("div");
+    row.className = "song-row";
+    const img = document.createElement("img");
+    img.src = song.cover;
+    img.alt = song.title;
 
+    img.onerror = function () {
+      this.src = "https://placehold.co/60x60?text=Music";
+    };
+    const titleSpan = document.createElement("span");
+    titleSpan.textContent = song.title;
+    const hintSpan = document.createElement("span");
+    hintSpan.className = "remove-hint";
+    hintSpan.textContent = "click to remove";
+    row.appendChild(img);
+    row.appendChild(titleSpan);
+    row.appendChild(hintSpan);
+
+    container.appendChild(row);
 
 
     /* =====================================================
@@ -236,10 +271,18 @@ function buildPlaylist() {
 
        YOUR CODE GOES HERE:
        ===================================================== */
+row.addEventListener("click", function () {
+      row.classList.add("removing");
 
+      setTimeout(function () {
+        row.remove();
+        
+        songsRemovedCount++;
+        updateMilestone();
+      }, 200); 
+    });
 
-
-  // (Make sure your Step 7 loop closes here.)
+  }); 
 
 
   /* =====================================================
@@ -265,6 +308,20 @@ function buildPlaylist() {
 
      YOUR CODE GOES HERE:
      ===================================================== */
+function updateMilestone() {
+  // Create an array of milestone objects
+  const milestones = [
+    { count: 1, message: "🎵 First song cleared! Off to a good start." },
+    { count: 2, message: "🎧 Keeping the vibe going!" },
+    { count: 3, message: "🌟 Clean slate! Playlist cleared." }
+  ];
 
-
+  // Loop through milestones to check if the count matches
+  milestones.forEach(function (milestoneItem) {
+    if (songsRemovedCount === milestoneItem.count) {
+      milestone.textContent = milestoneItem.message;
+    }
+  });
 }
+}
+
